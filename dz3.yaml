@@ -1,0 +1,227 @@
+openapi: 3.0.4
+info:
+  title: Event Service - OpenAPI 3.0 
+  version: 1.0.0
+  description: API для управления мероприятиями
+
+paths:
+  /events:
+    post:
+      summary: Создать событие
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '201':
+          description: Событие создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /events/{eventId}/players:
+    post:
+      summary: Зарегистрировать участника
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'
+      responses:
+        '201':
+          description: Участник зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+    get:
+      summary: Просмотр участников
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список участников
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                    $ref: '#/components/schemas/Player'
+
+  /tickets:
+    post:
+      summary: Генерация билета
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+      responses:
+        '201':
+          description: Билет создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+
+
+  /notifications:
+    post:
+      summary: Отправка уведомления
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      responses:
+        '200':
+          description: Уведомление отправлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+                
+  /tickets/{ticketId}/scan:
+    post:
+      summary: Сканирование билета
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Билет отсканирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '404':
+          description: Билет не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/{eventId}/reviews:
+    post:
+      summary: Добавить отзыв о событии
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Review'
+      responses:
+        '201':
+          description: Отзыв добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+components:
+  schemas:
+    Event:
+      type: object
+      required: [id, name, date, location]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        location:
+          type: string
+
+    Player:
+      type: object
+      required: [id, name, email]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+
+    Ticket:
+      type: object
+      required: [id, eventId, playerId]
+      properties:
+        id:
+          type: integer
+        eventId:
+          type: integer
+        playerId:
+          type: integer
+
+    Notification:
+      type: object
+      required: [id, message, playerId]
+      properties:
+        id:
+          type: integer
+        message:
+          type: string
+        recipientId:
+          type: integer
+
+    Review:
+      type: object
+      required: [id, eventId, playerId, comment]
+      properties:
+        id:
+          type: integer
+        eventId:
+          type: integer
+        playerId:
+          type: integer
+        comment:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+
+
+  
+
+
+
